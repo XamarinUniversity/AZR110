@@ -1,0 +1,286 @@
+---
+uti: com.xamarin.workbook
+platforms:
+- Console
+---
+
+# Testing your Azure Survey Service for AZR110
+
+This Xamarin workbook provides a simple client to access \*\*question\*\* and \*\*response\*\* data for the \*\*AZR110\*\* survey service. This provides a validation to ensure the service is defined correctly.
+
+## Configuration
+
+Change the following configuration to your specific service, it's defaulting to a pre-built version of the lab exercise which is used for the client version of the class.
+
+```csharp
+static string subdomain = "castthevote"; // The mobile app service name
+```
+
+These strings represent the URLs for various operations we can perform. Recall that the server (ASP.NET or node) implements an OData endpoint for querying the data over HTTP.
+
+```csharp
+static string GetAllQuestions = "https://" + subdomain + ".azurewebsites.net/tables/questions";
+static string GetOneQuestion = "https://" + subdomain + ".azurewebsites.net/tables/questions/{0}";
+static string GetResponsesForQuestion = "https://" + subdomain + ".azurewebsites.net/tables/responses?$filter=questionId%20eq%20'{0}'";
+static string AddResponseUrl    = "https://" + subdomain + ".azurewebsites.net/tables/responses";
+static string UpdateResponseUrl = "https://" + subdomain + ".azurewebsites.net/tables/responses/{0}";
+static string DeleteResponseUrl = "https://" + subdomain + ".azurewebsites.net/tables/responses/{0}";
+```
+
+## Data Transfer Objects
+
+When we are working with our Azure data, it comes down (and goes back) as JSON data. We can convert it to and from JSON by matching up properties to values. There are also libraries such as `System.Json` and the `Newtonsoft.Json` nuget package that can help with this conversion.
+
+The `SurveyQuestion` class definition provides a client-side DTO to handle the questions table.
+
+```csharp
+class SurveyQuestion
+{
+    public string Id { get; set; }
+    public string Text { get; set; }
+    public string Answers { get; set; }
+
+    public string ToJson()
+    {
+        var json = "";
+        if (string.IsNullOrEmpty(Id))   // for inserting, do not specify primary key
+            json = @"{""text"":""" + Text + @""",""answers"":" + Answers + "}";
+        else // for updating, must provide primary key
+            json = @"{""id"":""" + Id + @""",""text"":""" + Text + @""",""answers"":" + Answers + "}";
+		return json;
+	}
+}
+```
+
+The `SurveyResponse` class definition provides a client-side DTO to handle the responses table.
+
+```csharp
+class SurveyResponse
+{
+	public string Id { get; set; }
+    public string QuestionId { get; set; }
+    public string Name { get; set; }
+    public int Answer { get; set; }
+
+	public string ToJson()
+	{
+		var json = "";
+		if (string.IsNullOrEmpty(Id))   // for inserting, do not specify primary key
+			json = @"{""name"":""" + Name + @""",""questionId"":""" + QuestionId + @""",""answer"":" + Answer.ToString() + "}";
+		else // for updating, must provide primary key
+			json = @"{""id"":""" + Id + @""",""questionId"":""" + QuestionId + @""",""name"":""" + Name + @""",""answer"":" +  Answer.ToString() + "}";
+		return json;
+	}
+
+	// Simple method to retrieve Id from JSON response
+	// so we don't need to pull in a full parser.
+	public string GetId(string jsonText)
+	{
+		const string marker = "\"id\":\"";
+		int ix = jsonText.IndexOf(marker);
+		if (ix > 0)
+		{
+			ix += marker.Length;
+			int ex = jsonText.IndexOf('"', ix);
+			if (ex > ix)
+			{
+				return jsonText.Substring(ix, ex - ix);
+			}
+		}
+		return "";
+	}
+}
+```
+
+## Accessing the Azure service
+
+This helper method creates a correctly configured `WebClient` that includes the headers required to access our table endpoints:
+
+```csharp
+using System.Net;
+WebClient AzureClient() {
+	WebClient client = new WebClient();
+	client.Headers.Add(HttpRequestHeader.Accept, "application/json");
+	client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+	client.Headers.Add("ZUMO-API-VERSION", "2.0.0"); // for working with Easy Table
+	return client;
+}
+```
+
+## List the Questions + valid Answers
+
+Let's start by pulling down all the questions and answers from the **questions** table.
+
+```csharp
+var questions = new List<SurveyQuestion>();
+var responseString = "";
+try
+{
+	WebClient client = AzureClient();
+	responseString = client.DownloadString(GetAllQuestions); // GET
+	// ...and wait...
+	Console.WriteLine("GET => " + responseString);
+}
+catch (System.Net.WebException e)
+{
+	Console.WriteLine("X-ZUMO-APPLICATION failed: " + e.Message);
+}
+```
+
+The responseString contains the data returned from Azure in a JSON-formatted string:
+
+```csharp
+responseString
+```
+
+## Get a single question
+
+Individual items can be retrieved using a different REST URL. Copy a GUID from the previous response into the `id` variable. This `id` is added to the filter in the URL:
+
+```csharp
+var id = @"578ebd07-311a-4857-915b-a12680159a17"; // UPDATE THIS WITH AN ID FROM ABOVE
+var getUrl = String.Format(GetOneQuestion, id);
+getUrl
+```
+
+Now use this modified URL (including the filter) to retrieve a single row of data from the server:
+
+```csharp
+responseString = "";
+try
+{
+	WebClient client = AzureClient();
+	responseString = client.DownloadString(getUrl); // GET
+	// ...and wait...
+	Console.WriteLine ("GET => " + responseString);
+}
+catch (System.Net.WebException e)
+{
+    Console.WriteLine("X-ZUMO-APPLICATION failed (make sure you updated the `id` above from your Azure instance): " + e.Message);
+}
+```
+
+## Add a response to the question
+
+Adding an object to a table can be done with a simple POST operation passing the JSON string as the body of the HTTP request:
+
+```csharp
+SurveyResponse answer = new SurveyResponse() {
+	QuestionId = id,
+	Answer = 0,
+	Name = "XamU Student"
+};
+
+try
+{
+	WebClient client = AzureClient();
+	var payload = answer.ToJson();
+    var response = client.UploadString(AddResponseUrl, "POST", payload);
+	responseString = response;
+
+	Console.WriteLine("INSERT SUCCESS, now it has an Id => " + responseString);
+}
+catch (System.Net.WebException e)
+{
+	Console.WriteLine("X-ZUMO-APPLICATION add failed: " + e.Message);
+	var resp = new System.IO.StreamReader(e.Response.GetResponseStream()).ReadToEnd();
+	Console.WriteLine(resp);
+}
+```
+
+The `id` GUID is the primary key for this new row.
+
+```csharp
+// Can replace with another answer ID if desired
+answer.Id = answer.GetId(responseString);
+//answer.Id = "476a6ccb-ba69-42e2-a55f-0aeac8e4521b";
+```
+
+## Get all responses to a question
+
+We can supply a `$filter` to a query to restrict the results on the *server side*. Ultimately this will generate a SQL `WHERE` clause.
+
+```csharp
+var filterUrl = String.Format(GetResponsesForQuestion, answer.QuestionId);
+
+filterUrl
+```
+
+```csharp
+try
+{
+	WebClient client = AzureClient();
+	var response = client.DownloadData(filterUrl); // GET
+	// ...and wait...
+	responseString = System.Text.Encoding.UTF8.GetString(response);
+	Console.WriteLine("GET => " + responseString);
+}
+catch (System.Net.WebException e)
+{
+	Console.WriteLine("X-ZUMO-APPLICATION add failed: " + e.Message);
+	var resp = new System.IO.StreamReader(e.Response.GetResponseStream()).ReadToEnd();
+	Console.WriteLine(resp);
+}
+```
+
+## Update our response
+
+Updating an existing row requires the primary key `id` to be passed in the querystring to identify the data being updated (and the JSON representing the new record being passed in the HTTP body).
+
+```csharp
+answer.Answer = 1;
+var updateUrl = String.Format(UpdateResponseUrl, answer.Id);
+
+updateUrl
+```
+
+Using this URL, an HTTP PATCH request is made with the JSON representation of the updated data:
+
+```csharp
+try
+{
+	WebClient client = AzureClient();
+	var payload = answer.ToJson();
+	var response = client.UploadString(updateUrl, "PATCH", payload);
+	var responseString = response;
+	Console.WriteLine("UPDATE SUCCESS, new record => " + responseString);
+}
+catch (System.Net.WebException e)
+{
+	Console.WriteLine("X-ZUMO-APPLICATION update failed: " + e.Message);
+	var resp = new System.IO.StreamReader(e.Response.GetResponseStream()).ReadToEnd();
+	Console.WriteLine(resp);
+}
+```
+
+## Delete
+
+A record can be deleted by its primary key `id`.
+
+```csharp
+var deleteUrl = String.Format(DeleteResponseUrl, answer.Id);
+deleteUrl
+```
+
+The HTTP DELETE method is used to delete the row from the service:
+
+```csharp
+WebClient client = AzureClient();
+try
+{
+	var payload = answer.ToJson();
+	var response = client.UploadString(deleteUrl, "DELETE", ""); // DELETE, don't post the JSON body
+	var responseString = response;
+
+	Console.WriteLine("DELETE Json response => " + responseString);
+}
+catch (System.Net.WebException e)
+{
+	if (e.Message.IndexOf("404") > 0)
+		Console.WriteLine("Doesn't exist (previously deleted?): " + e.Message);
+	else
+		Console.WriteLine("X-ZUMO-APPLICATION delete failed: " + e.Message);
+}
+```
+
+The first time a delete is executed the status code will be `200` to indicate the record was deleted. Subsequent calls to DELETE the same `id` will return a `404` status code, indicating that the record was "not found" for deletion.
