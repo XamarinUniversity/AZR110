@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+    <title>Add a database to your Survey service</title>
+    <link rel="stylesheet" type="text/css" href="./res/styles/normalize.css">
+    <link rel="stylesheet" type="text/css" href="./res/styles/prettify.css" />
+    <link rel="stylesheet" type="text/css" href="./res/styles/styles.css">
+</head>
+
+<body>
+    <!-- Use the same title as the StartHere -->
+    <header>Building an Azure Mobile App</header>
+
+    <section id="main">
+
+        <h1 id="page-title"></h1>
+
+        <h2>Duration</h2>
+        <p>10 minutes</p>
+
+        <h2>Goals</h2>
+        <p>
+            In this lab exercise, you will create a new SQL server database in Azure to hold our service side data. We will add this database to the same resource group we defined for our Survey service and then set up a connection string in our Azure app to point to this new database instance.
+        </p>
+
+        <h2>Challenge</h2>
+        <p>
+        You will be creating and a new SQL server database to your Azure service using the Azure portal. Then you will need to add a new connection string to your survey app to associate this new database with the default "MS_TableConnectionString" name. This database will be used to store the questions and responses from our users.
+        </p>
+        <p>
+        If you need some guidance, you can use the step-by-step instructions below.
+        </p>
+
+        <!-- Steps -->
+        <h1>Steps</h1>
+
+        <h2>Create a new Azure SQL server database</h2>
+        <ol>
+            <li>Open a browser window and login to the <a target="_blank" href="https://portal.azure.com/">Azure management portal</a> with your account.</li>
+            <li>You can either use the <b>+ New > Data + Storage > SQL Database</b> option, or click the <b>SQL databases</b> option in the sidebar and then click the <b>New</b> toolbar button as shown below:</li>
+
+            <img class="indent-none" src="./res/images/ex2-create-sql.png" />
+
+            <li>
+                Fill out the required database configuration:
+                <ul class="indent-none">
+                    <li>Select a name for your database - this must be a unique database name for the server you select.</li>
+                    <li>Make sure to use the same resource group you used for your mobile app.</li>
+                    <li>Use <b>Blank database</b> as the source - this means no tables are defined.</li>
+                    <li>Select or create a server in the same region as your app. If you create a new server, you will need to supply admin credentials (user/password) as well as give it a globally unique name since it has a real DNS and IP address associated with it. Keep in mind you can have <em>multiple</em> databases on a single server for cost efficiency.</li>
+                    <li>Select a pricing tier - any should work for our simple app, here we've selected <b>Basic</b>. If this were a real production application we'd want to use a higher-level tier to ensure we get better performance.</li>
+                </ul>
+            </li>
+            <img class="indent-none" style="max-width: 100%" src="./res/images/ex2-sql-options.png" />
+
+            <li>Click <b>Create</b> to create the database. This will take a few minutes - particularly if you had to define a new server to put the database on.</li>
+        </ol>
+
+        <h2>Add a connection string to your app service</h2>
+        <p>
+        Now that we have a database defined, let's allow our app service to access it by defining a connection string.
+        </p>
+        <ol>
+            <li>Open your app service - you can either go back to the Azure dashboard by clicking on "Microsoft Azure" in the header if you pinned your service, or click the "App Services" link in the sidebar to list all your defined app services. Locate your app and click on it.</li>
+            <li>Scroll down to the "Mobile" section in your app properties blade and select the "Data Connections" item.</li>
+            <img class="indent-none" src="./res/images/ex2-data-connections.png" />
+            <li>Click the <b>+ Add</b> toolbar button to add a new connection.</li>
+            <li>Select "SQL Database" from the <b>Type</b> dropdown and then click the "SQL Database" entry to configure the database.
+            </li>
+            <img class="indent-none" src="./res/images/ex2-add-db-connection.png" />
+            <li>This wil open a new blade to select or create a database and your database you just created should show up in the list - select it and click .</li>
+            <li>Select the "Connection String" item from the blade - this will open a sub-blade where you can set the user/password for the database; make sure to use the same credentials you setup when you created the database.</li>
+            <li>The "Name" will pre-populate with "MS_TableConnectionString" which is the value we want. Click <b>OK</b> to create the connection string.</li>
+            <img class="indent-none" src="./res/images/ex2-add-db.png" />
+            <li>The portal will display a popup balloon when the connection has been created and you can switch to another item and back to verify that the connection exists in your app.</li>
+        </ol>
+     
+
+        <h1>Summary</h1>
+        <p>
+            In this exercise, you created a database for your Azure service and set up the service to be able to access it with a connection string.
+        </p>
+        <div class="align-right">
+            <a href="../Start%20Here.html">Go Back</a>
+        </div>
+    </section>
+
+    <script src="./res/js/jquery.min.js"></script>
+    <script src="./res/js/prettify.js"></script>
+    <script src="./res/js/script.js"></script>
+
+    <footer>Copyright (C) 2018 Xamarin Inc., Microsoft.</footer>
+</body>
+</html>

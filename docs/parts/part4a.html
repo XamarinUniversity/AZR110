@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+    <title>Add a new table into the Survey service</title>
+    <link rel="stylesheet" type="text/css" href="./res/styles/normalize.css">
+    <link rel="stylesheet" type="text/css" href="./res/styles/prettify.css" />
+    <link rel="stylesheet" type="text/css" href="./res/styles/styles.css">
+</head>
+
+<body>
+    <!-- Use the same title as the StartHere -->
+    <header>Building an Azure Mobile App</header>
+
+    <section id="main">
+
+        <h1 id="page-title"></h1>
+
+        <h2>Duration</h2>
+        <p>5 minutes</p>
+
+        <h2>Goals</h2>
+
+        <p>
+            In this lab exercise, you will add a new Easy Table to your mobile application using the "Add from CSV" option in the Azure portal. This exercise can only be done if you used the portal to create your service (e.g. <b>Node.js</b>). If you are using an <b>ASP.NET</b> back end, then you need to use <a href="./part4b.html">these instructions instead</a>.
+        </p>
+
+        <h2>Assets</h2>
+        <p>
+            The provided <strong>Exercise 4</strong> folder contains a <b>questions.csv</b> file which has the data you will be importing into Azure.
+        </p>
+
+        <h2>Challenge</h2>
+        <p>
+        You will need to create a new Easy Table named <b>questions</b> to hold the questions users can response to. It cam be created and populated through an existing <b>questions.csv</b> file in the materials folder using the <b>Add CSV</b> functionality in the Easy Table blade. There are two columns which will be created:
+        <div align="center">
+            <table>
+                <tr>
+                    <th>Columnn Name</th>
+                    <th>Type</th>
+                </tr>
+                <tr>
+                    <td>text</td>
+                    <td>String</td>
+                </tr>
+                <tr>
+                    <td>answers</td>
+                    <td>String</td>
+                </tr>
+            </table>
+        </div>
+        </p>
+
+        <p>
+        Once you have created the table, you should be able to hit the <b>/tables/questions</b> endpoint and see data from your service!
+        </p>
+
+        <p>
+        If you need some guidance, you can use the step-by-step instructions below.
+        </p>
+        
+        <!-- Steps -->
+        <h1>Steps</h1>
+
+        <h2>Import the questions.csv file</h2>
+        <ol>
+            <li>Open a browser window and login to the <a target="_blank" href="https://portal.azure.com/">Azure management portal</a> with your account.</li>
+            <li>Go to the mobile app service you created in the prior exercise.</li>
+            <li>Scroll down through the actions blade and locate the <b>Mobile</b> section. Click on the <b>Easy tables</b> item.</li>
+            <li>Click the <b>Add from CSV</b> toolbar button in the Easy table blade.</li>
+            <img class="indent-none" src="./res/images/ex4-add-csv-file.png" />
+            <li>Point the blade at the <b>questions.csv</b> file in the <b>Exercise 4</b> folder included with these lab materials.
+                <ul class="indent-none">
+                    <li>You can open the file with a text editor to see the data that will be imported.</li>
+                    <li>It has two columns - <b>text</b> and <b>answers</b>.</li>
+                    <li>You can add additional questions/answers if you want to see different data.</li>
+                </ul>
+            <li>Both of the columns can be left as <code>String</code> values; click <b>Start Upload</b> to import the data.</li>
+            <img class="indent-none" src="./res/images/ex4-import-csv.png" />
+            <li>Once it's imported, you can check the data by clicking on the <b>questions</b> table in the Easy Table blade.</li>
+            <img class="indent-none" src="./res/images/ex4-questions-data.png" />
+        </ol>
+
+        <h2>Check your table endpoint (Optional)</h2>
+        <p>
+            Adding the table also created a new endpoint: <b>&lt;URL>/tables/questions</b> which you can check with your REST client. Remember to add the <b>ZUMO-API-VERSION</b> header value.
+        </p>
+        <img class="indent-medium" src="./res/images/ex4-postman.png" />
+
+        <h1>Summary</h1>
+        <p>
+            In this exercise, you added a new Easy Table with pre-supplied data to your service using the Azure portal.
+        </p>
+        <div class="align-right">
+            <a href="../Start%20Here.html">Go Back</a>
+        </div>
+    </section>
+
+    <script src="./res/js/jquery.min.js"></script>
+    <script src="./res/js/prettify.js"></script>
+    <script src="./res/js/script.js"></script>
+
+    <footer>Copyright (C) 2018 Xamarin Inc., Microsoft.</footer>
+</body>
+</html>

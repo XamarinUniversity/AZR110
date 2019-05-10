@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+    <title>Create the Survey Azure app service in Visual Studio</title>
+    <link rel="stylesheet" type="text/css" href="./res/styles/normalize.css">
+    <link rel="stylesheet" type="text/css" href="./res/styles/prettify.css" />
+    <link rel="stylesheet" type="text/css" href="./res/styles/styles.css">
+</head>
+
+<body>
+    <!-- Use the same title as the StartHere -->
+    <header>Building an Azure Mobile App</header>
+
+    <section id="main">
+
+        <h1 id="page-title"></h1>
+
+        <h2>Duration</h2>
+        <p>15 minutes</p>
+
+        <h2>Goals</h2>
+        <p>
+            In this lab exercise, you will create a new Azure mobile service using Visual Studio.
+        </p>
+
+        <div class="hintblock">
+        <b>Note:</b> you must have the Azure SDK installed to go through these steps. If you do not see the proper app templates in your Visual Studio installation, it means the SDK is not completely installed. 
+        </div>
+
+        <h2>Assets</h2>
+        <p>
+        There is a completed version of the exercise in the <b>Exercise 1/Completed</b> folder. We recommend that you not rely on this unless absolutely necessary to ensure you have the latest project template + Azure SDK settings. In addition, this project is not connected to an Azure instance - you will need to publish it yourself to use it with Azure, or run it locally throughout all the exercises.
+        </p>
+
+        <!-- Steps -->
+        <h1>Steps</h1>
+
+        <h2>Create a new Azure service</h2>
+        <ol>
+            <li>Open Visual Studio and create a new solution.</li>
+            <li>Select ASP.NET Web Application from the Web category and give it the name "SurveyAppService".</li>
+            <li>Uncheck the "Add Application Insights" option if it's checked in the dialog. (<a href="https://azure.microsoft.com/en-us/services/application-insights/">Visual Studio App Insights</a> is an analytics solution supported by Azure for tracking and monitoring applications. We won't be covering this product here.)</li>
+            <img class="indent-none" src="./res/images/ex1-vs-new-project.png" />
+            
+            <li>On the web application screen, select the Azure Mobile App template. Click <b>OK</b> to create the application</li>
+            <img class="indent-none" style="max-width: 100%" src="./res/images/ex1-vs2017-azure-app.png" />
+
+            <div class="hintblock">
+                <div>In Visual Studio 2015, Azure deployment was set up on a web application project creation screen. Select the Azure Mobile App template and make sure the "Host in the Cloud" box is checked. Also, make sure the drop-down selection is "App Service". You can skip ahead to the Azure configuration step.</div>
+            </div>
+
+            <li>Visual Studio will create and load the new solution. Once your web application is created, an Overview screen will display. Switch to the <b>Publish</b> tab to start setting up your Azure deployment configuration. Make sure <b>Microsoft Azure App Service</b> and the <b>Create New</b> option is selected and click <b>Publish</b>.</li>
+            <img class="indent-none" style="max-width: 100%" src="./res/images/ex1-vs2017-project-publish.png" />
+
+            <div class="hintblock">
+                <div>You can also return to the Publish options by right-clicking the project and choosing <b>Publish...</b>.</div>
+            </div>
+
+            <li>This will open the publishing configuration dialog. We want to hosting this in Azure.
+                <ul class="indent-none">
+                    <li>Our application will be a voting/survey application so pick an appropriate name that Azure allows. Remember this will be used to generate your public URL to the service so it must be <em>globally</em> unique across all of Azure.</li>
+                    <li>Create a new Resource Group to associate all your app resources with so you can delete them when you are finished with the exercise.</li>
+                    <li>Select a pricing tier, it's recommended that you use <b>S1 - Standard</b> as a minimum, but you can select any tier including the free tier and it should work.</li>
+                    <li>Place the service in a region close to you.</li>
+                </ul>
+                When you have filled in the required data, click <b>Create</b> to add your service definition to Azure. You can also request to pin this new app to your dashboard if you like.
+            </li>
+            <img class="indent-none" style="max-width: 100%" src="./res/images/ex1-vs2017-project-publish-azure.png" />
+
+            <li>Depending on your version of Visual Studio, it may automatically publish to Azure. If not, <b>Build</b> the project, then use the <b>Build > Publish</b> option to publish your server code to Azure. This option is also available from the project's context menu in the Solution Explorer.</li>
+            <img class="indent-none" src="./res/images/ex1-vs-publish.png" />
+        </ol>
+
+        <h2>Test the service</h2>
+        <p>
+        If it didn't launch the published URL automatically, check the service and verify it is running by clicking the URL link in the build window after it has succesfully been published. You can also get this URL from your Azure management console or the Visual Studio Publish configuration screen as well.
+        </p>
+
+        <img src="./res/images/ex1-vs-azure-url.png" />
+
+        <p>
+        This should open a web browser with the default page:
+        </p>
+
+        <img src="./res/images/ex1-test-the-site.png" />
+
+        <h1>Summary</h1>
+        <p>
+            In this exercise, you created a new mobile app in Azure using Visual Studio.
+        </p>
+        <div class="align-right">
+            <a href="../Start%20Here.html">Go Back</a>
+        </div>
+    </section>
+
+    <script src="./res/js/jquery.min.js"></script>
+    <script src="./res/js/prettify.js"></script>
+    <script src="./res/js/script.js"></script>
+
+    <footer>Copyright (C) 2018 Xamarin Inc., Microsoft.</footer>
+</body>
+</html>
