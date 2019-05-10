@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+    <title>Add a new table into the Survey service</title>
+    <link rel="stylesheet" type="text/css" href="./res/styles/normalize.css">
+    <link rel="stylesheet" type="text/css" href="./res/styles/prettify.css" />
+    <link rel="stylesheet" type="text/css" href="./res/styles/styles.css">
+</head>
+
+<body>
+    <!-- Use the same title as the StartHere -->
+    <header>Building an Azure Mobile App</header>
+
+    <section id="main">
+
+        <h1 id="page-title"></h1>
+
+        <h2>Duration</h2>
+        <p>10 minutes</p>
+
+        <h2>Goals</h2>
+        <p>
+            In this lab exercise, you will add a new table and endpoint to your mobile application using Visual Studio and ASP.NET. This new table will hold the pre-created survey questions for our clients. This exercise can only be done if you used <b>ASP.NET</b> to create your back end. If you used the portal to create your service (e.g. <b>Node.js</b>) then you need to use <a href="./part4a.html">these instructions instead</a>.
+        </p>
+
+        <h2>Assets</h2>
+        <p>
+        There is a completed version of the exercise in the <b>Exercise 4/Completed</b> folder.
+        </p> 
+
+        <h2>Challenge</h2>
+        <p>
+            You are going to add a new <b>questions</b> DTO and endpoint; in addition, we will seed this table with data the first time we access it. This will require that you create a class to represent this both in our database and over the wire when talking to a client. You will add a class named <code>SurveyQuestion</code> to provide this support. You will also need to add a new <code>TableController</code> to expose this table over the network. The DTO you will create will have the following properties:
+            <ul>
+                <li><code class="prettyprint">string Text</code> to hold the question for the survey.</li>
+                <li><code class="prettyprint">string Answer</code> to hold the '|' separated list of possible answers.</li>
+            </ul>
+        </p>
+        <p>
+            You want to store this object in a table named "questions", the JSON format will match the DTO object (the JSON parser will automatically lowercase the property names).
+        </p>
+        <p>
+            The table controller should only expose the <b>GET</b> options (all or by ID). We will not allow this table to be updated.
+        </p>
+        <p>
+            Finally, we will seed it with data using a database initializer function by creating a set of <code>SurveyQuestions</code> and inserting them into the table.
+        </p>
+
+        <!-- Steps -->
+        <h1>Steps</h1>
+
+        <h2>Add the question DTO</h2>
+        <ol>
+            <li>Create a new class in the <b>Data Objects</b> folder. Name it "SurveyQuestion".</li>
+            <li>Have the class derive from <code>Microsoft.Azure.Mobile.Server.EntityData</code>.
+            <li>Add the following public properties to the class:
+                <ul class="indent-none">
+                    <li><code class="prettyprint">string Text</code> to hold the question.</li>
+                    <li><code class="prettyprint">string Answers</code> to hold the answers.</li>
+                </ul>
+            </li>
+            <li>Add a <code class="prettyprint">[Table("questions")]</code> attribute to the class to properly name the table.</li>
+        </ol>
+<p><a href="#" onclick="toggleCode(this,'dto_object');return false;" class="uiitem">Show Code</a>
+<div class="indent-medium" id="dto_object" style="display:none;">
+<pre class="prettyprint">
+using Microsoft.Azure.Mobile.Server;
+using System.ComponentModel.DataAnnotations.Schema;
+...
+[Table("questions")]
+public class SurveyQuestion : EntityData
+{
+    public string Text { get; set; }
+    public string Answers { get; set; }
+}
+</pre></div></p>
+
+        <h2>Create the survey question Table Controller</h2>
+        <p>
+        The next step is to expose this DTO through a Table Controller. We will use the same process we did in the last lab.
+        </p>
+        <ol>
+            <li>Add a new <b>Azure Mobile App Table Controller</b> to the <b>Controllers</b> folder.</li>
+            <li>In the <b>Add Controller</b> dialog:
+                <ul class="indent-none">
+                    <li>Select your <code>SurveyQuestion</code> DTO from the Model class drop-down.</li>
+                    <li>Select the <code>MobileServiceContext</code> from the Data context class drop-down.</li>
+                    <li>Make the name of your new controller "QuestionsController". This will set the endpoint to "questions".</li>
+                </ul>
+            </li>
+            <li>Click <b>Add</b> to add the controller code.</li>
+            <li>VS should open the new controller - if not, do that yourself and remove all the update methods (Post, Patch and Delete). You should only have the initialization method, <code>GetAllSurveyQuestions</code> and <code>GetSurveyQuestion</code>.</li>
+        </ol>
+
+        <h2>Dealing with schema changes</h2>
+        <p>
+        We've changed our database schema by adding a new table to the EF <code>DbContext</code> (this was done by the <b>Add Controller</b> step above). By default, this will break our service because it doesn't expect the DTO shape or the <code>MobileServiceContext</code> (which is the EF <code>DbContext</code>) to ever change. We have several ways we can deal with this problem:
+        </p>
+
+        <ol>
+            <li>We can initialize the database tables the first time we access the database as a one-time operation. This is the <b>default</b>.</li>
+            <li>We can recreate the database tables when the schema changes.</li>
+            <li>We can create <em>migration</em> steps when the schema changes.</li>
+            <li>We can manually adjust the schema using SQL Management Studio (or just drop all the tables).</li>
+        </ol>
+
+        <div class="hintblock">
+            <b>Note:</b> this is only a problem because we've run the service already and it created the table structure. The default behavior, as noted above, is to only do this initialization once - so our new table won't ever be created, and when we go to access it, EF will throw an exception.
+        </div>
+
+<p>
+<a href="#" onclick="toggleBlock(this, 'db-init', 'What initializes the database?', 'Hide'); return false;" class="uiitem">What initializes the database?</a>
+<div class="wsblock" id="db-init" style="display:none;">
+    <!-- Each item is in a div "wsitem" -->
+    <div class="wsitem">
+        <!-- Give it a title and description -->
+        <b>What initializes the database?</b>
+        <p>
+            When the service starts up and gets the first request to hit a database through the EF <code>DbContext</code>, it runs the logic contained in the <b>Startup.MobileApp.cs</b> file in the <b>App_Start</b> folder in the Solution Explorer. In this file is a database initializer class that implements <code>IDatabaseInitializer</code> associated with your EF context. This association is created through a call to <code>Database.SetInitializer</code> in the startup code, or through a <code>databaseInitializer</code> entry in the <b>web.config</b> as shown below.
+        </p>
+<pre class="prettyprint codeblock">
+&lt;entityFramework>
+    &lt;contexts>
+        &lt;!-- Types must be fully qualified with assembly -->
+      &lt;context type="SurveyAppService.Models.MobileServiceContext, SurveyAppService">
+        &lt;databaseInitializer type="SurveyAppService.MobileServiceInitializer, SurveyAppService" />
+      &lt;/context>
+    &lt;/contexts>
+    ...
+&lt;/entityFramework>
+</pre>        
+    </div>
+</div>
+</p>
+
+        <h4>One-time initialization</h4>
+        <p>
+        The <code>CreateDatabaseIfNotExists&lt;MobileServiceContext></code> database initializer class directs Entity Framework to create the database tables needed to run the service if no tables exist in the database. This initializer only runs once - if we later add/change/delete a DTO, the service will throw an exception indicating the schema is out of date and does not match the model.
+        </p>
+
+        <h4>Re-create tables when schema changes</h4>
+        <p>
+        The database initializer class <code>DropCreateDatabaseIfModelChanges&lt;MobileServiceContext></code> instructs Entity Framework to drop all the tables and recreate them if the model (<code>MobileServiceContext</code>) or any DTOs in the model changes. Recall that when we add a new Table Controller, a <code>DbSet</code> property gets created in the <code>MobileServiceContext</code> to represent the table - the system identifies this using reflection and recognizes that the DB schema is different. It will then re-create all the tables using the current model; however we will lose all our data. 
+        </p>
+
+        <h4>Code First Migrations</h4>
+        <p>
+        This method of keeping the database in sync with the data model by dropping the tables works well until you deploy the application to production and have data you want to keep. The way we can solve this problem is to use <b>Code First Migrations</b>. This allows Entity Framework to update the database schema instead of dropping and re-creating the database when the DTO or model has changed. The setup for this is a bit complex, but <a target="_blank" href="http://www.asp.net/mvc/overview/getting-started/getting-started-with-ef-using-mvc/migrations-and-deployment-with-the-entity-framework-in-an-asp-net-mvc-application">this blog post</a> covers it in great detail.
+        </p>  
+
+        <h4>Adjust the DB schema manually</h4>
+        <p>
+        Finally, we can use a SQL tool to change the DB schema to match our expectations. This is a manual process and would involve someone logging into the SQL server with SQL Management Studio (or some other tool) and executing SQL DML commands to alter the table(s) and add information into the schema.
+        </p>
+
+        <h2>Add our seed data and force EF to recreate our tables</h2>
+        <p>
+        Let's change our database initializer to re-create our tables to force it to create our new DTO and seed the data.
+        </p>
+
+        <ol>
+            <li>Let's start by adding the seed data. Add a new <code>static</code> class to the project named <b>DataFactory</b> and add the following code to it (just copy/paste the code below and then add any missing namespaces using <b>CTRL+.</b>):</li>
+
+<pre class="prettyprint codeblock">
+static class DataFactory
+{
+    public static List&lt;SurveyQuestion> Questions
+    {
+        get
+        {
+            return new List&lt;SurveyQuestion>
+            {
+                new SurveyQuestion { Id = Guid.NewGuid().ToString(), 
+                    Text = "Where should we have lunch?", 
+                    Answers = "McDonalds|Sushi King|Olive Garden|Outback Steakhouse|KFC" },
+                new SurveyQuestion { Id = Guid.NewGuid().ToString(), 
+                    Text = "PARTY! Which date do you prefer?", 
+                    Answers = "Monday|Wednesday|Friday" },
+                new SurveyQuestion { Id = Guid.NewGuid().ToString(), 
+                    Text = "Which mobile platform do you like best?", 
+                    Answers = "Android|iOS|UWP|WPF|HTML|Blackberry" }
+            };
+        }
+    }
+}
+</pre>
+        <li>Open the <b>Startup.MobileApp.cs</b> file in the <b>App_Start</b> folder in the Solution Explorer.</li>
+        <li>
+        Locate the database initializer class named <code>MobileServiceInitializer</code>. The base class used here, <code>CreateDatabaseIfNotExists</code>, will create the tables the first time and throw an error if the schema is ever changed in the future. We don't want that behavior so change it to <code>DropCreateDatabaseIfModelChanges</code>.
+        </li>
+        <li>
+        The initialization process will also call the defined <code>Seed</code> method to populate any tables with data. There might be some code here to initialize the <code>TodoItem</code> DTO which was added as part of the initial project template. You can remove that code and instead add all the questions from the <code>DataFactory.Questions</code> static list to the <code class="prettyprint">context.SurveyQuestions</code> database set using the <code>AddRange</code> method.
+        </li>
+    </ol>
+
+<p><a href="#" onclick="toggleCode(this,'db_init');return false;" class="uiitem">Show Code</a>
+<div class="indent-medium" id="db_init" style="display:none;">
+<pre class="prettyprint">        
+public class MobileServiceInitializer : <mark>DropCreateDatabaseIfModelChanges</mark>&lt;MobileServiceContext>
+{
+    protected override void Seed(MobileServiceContext context)
+    {
+        <mark>context.SurveyQuestions.AddRange(DataFactory.Questions);</mark>
+        base.Seed(context);
+    }
+}
+</pre></div></p>
+
+
+        <h2>Publish the site and list the questions</h2>
+        <p>
+        Publish the site to Azure (or run it locally). Once the site is live check your new endpoint (<b>&lt;URL>/tables/questions</b>) using your REST client.
+        </p>
+        <p>
+        Remember to add the <b>ZUMO-API-VERSION</b> header value. It may take as long as a minute to respond when it detects that the database is out of sync; it will the drop and create all the data and run our seed method. It's possible that your request may timeout as well - if so, just reissue it. Eventually you should get the list of questions back as JSON:
+        </p>
+        <img class="indent-medium" src="./res/images/ex4-postman.png" />
+        
+        <h1>Summary</h1>
+        <p>
+            In this exercise, you added a new table with pre-supplied data to your service using Visual Studio.
+        </p>
+        <div class="align-right">
+            <a href="../Start%20Here.html">Go Back</a>
+        </div>
+    </section>
+
+    <script src="./res/js/jquery.min.js"></script>
+    <script src="./res/js/prettify.js"></script>
+    <script src="./res/js/script.js"></script>
+
+    <footer>Copyright (C) 2018 Xamarin Inc., Microsoft.</footer>
+</body>
+</html>

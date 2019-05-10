@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+    <title>Create the Survey app service in Azure</title>
+    <link rel="stylesheet" type="text/css" href="./res/styles/normalize.css">
+    <link rel="stylesheet" type="text/css" href="./res/styles/prettify.css" />
+    <link rel="stylesheet" type="text/css" href="./res/styles/styles.css">
+</head>
+
+<body>
+    <!-- Use the same title as the StartHere -->
+    <header>Building an Azure Mobile App</header>
+
+    <section id="main">
+
+        <h1 id="page-title"></h1>
+
+        <h2>Duration</h2>
+        <p>10 minutes</p>
+
+        <h2>Goals</h2>
+
+        <p>
+            In this lab exercise, you will create a new Azure mobile service using the Azure portal.
+        </p>
+
+        <h2>Challenge</h2>
+        <p>
+        This exercise can be completed using the <a href="https://portal.azure.com/">Azure management portal</a> by adding a new Mobile App. This new service will hold question and response data for a survey application we will be working with later in the class. 
+        </p>
+        <p>
+        If you are unfamiliar with the portal, or need some guidance, use the step-by-step instructions below to complete the exercise.
+        </p>
+
+        <!-- Steps -->
+        <h1>Steps</h1>
+
+        <h2>Create a new Azure service</h2>
+        <ol>
+            <li>Open a web browser and point it at the <a target="_blank" href="https://portal.azure.com/">Azure portal</a> (<a target="_blank" href="https://portal.azure.com/">https://portal.azure.com/</a>) and log in to your account.</li>
+            
+            <li>Use the <b>+ New</b> button in the sidebar to create a new Mobile app using the <b>Web + Mobile > Mobile App</b> template as shown below.</li>
+            
+            <img class="indent-none" src="./res/images/ex1-create-app.png" />
+            
+            <li>Fill in the required details for your new mobile app:
+                <ul class="indent-none">
+                    <li>Our application will be a voting/survey application so pick an appropriate name that Azure allows. Remember this will be used to generate your private URL to the service, so it must be unique among all Azure names.</li>
+
+                    <li>Create a new Resource Group to associate all your app resources with so you can delete them when you are finished with the exercise.</li>
+
+                    <li>Within the Service Plan, select a pricing tier. It's recommended you use <b>S1 - Standard</b> as a minimum, but you can select any tier, including the free tier, and it should work.</li>
+
+                    <li>In your Service Plan, you can also select a region. Pick a region close to you. For example, here I have selected the Free tier in the South Central region:</li>
+                    <img class="indent-none" src="./res/images/ex1-pricingtier.png" />
+                </ul>
+                When you have filled in the required data, click <b>Create</b> to add your service definition to Azure. You can also request to pin this new app to your dashboard if you like.
+            </li>
+
+            <img class="indent-none" src="./res/images/ex1-app-properties.png" />
+
+            <li>It will take a few minutes to create the application, but once it's finished it should display the app dashboard:</li>
+
+            <img class="indent-none" src="./res/images/ex1-app-dashboard.png" />
+
+        </ol>
+
+        <h2>Test the service</h2>
+        <p>
+        Check the service and verify that it is running by clicking the URL link in the app dashboard.
+        </p>
+
+        <img src="./res/images/ex1-app-dashboard2.png" />
+
+        <p>
+        This should open a web browser with the default page:
+        </p>
+
+        <img src="./res/images/ex1-test-the-site.png" />
+
+
+        <h1>Summary</h1>
+        <p>
+            In this exercise, you created a new mobile app in the Azure portal.
+        </p>
+        <div class="align-right">
+            <a href="../Start%20Here.html">Go Back</a>
+        </div>
+    </section>
+
+    <script src="./res/js/jquery.min.js"></script>
+    <script src="./res/js/prettify.js"></script>
+    <script src="./res/js/script.js"></script>
+
+    <footer>Copyright (C) 2018 Xamarin Inc., Microsoft.</footer>
+</body>
+</html>

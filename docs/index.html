@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+    <title>Building an Azure Mobile App Service</title>
+    <link rel="stylesheet" type="text/css" href="./parts/res/styles/normalize.css">
+    <link rel="stylesheet" type="text/css" href="./parts/res/styles/prettify.css">
+    <link rel="stylesheet" type="text/css" href="./parts/res/styles/styles.css">
+</head>
+
+<body>
+    <!-- This will be filled in at runtime -->
+    <header role="course-title"></header>
+
+    <section id="main">
+
+        <h2>Before you begin</h2>
+        <p>
+        This class assumes you have already setup an Azure account and have a basic knowledge of the Azure management portal. To get familiar with Azure and the Azure management portal before you begin, review the materials from <b>AZR101 - Introduction to Azure</b> before proceeding with this class.
+        </div>
+
+        <h2>Overview</h2>
+        <p>
+            This class focuses on the server model for building an Azure App Service mobile client back end. We will explore the techniques used to create the server-side back end and expose data from it using either <b>Node.js</b> or <b>ASP.NET</b>.
+        </p>
+
+        <h2>Lecture</h2>
+        <p><a href="./parts/slides.pdf">AZR110 - Building an Azure Mobile App</a></p>
+
+        <h2>Objectives</h2>
+        <ol>
+            <li>Create the mobile app service</li>
+            <li>Add a database to your back end</li>
+        </ol>
+
+        <h2>Exercises</h2>
+        <p>
+            Exercise materials are available from <a href="https://github.com/XamarinUniversity/AZR110/">GitHub</a>. The code can be cloned through a desktop Git client or <a href="https://github.com/XamarinUniversity/AZR110/archive/master.zip">downloaded directly</a> as a ZIP file.
+        </p>
+        <ol>
+            <li><div class="objective">Create a survey app service in Azure</div>
+            <a href="./parts/part1a.html">Create a Node.js back end</a> <b>OR</b> <a href="./parts/part1b.html">Create an ASP.NET back end</a>
+            <br />
+            In this lab exercise, you will create a new Azure mobile service either using the Azure portal (<b>Node.js</b>) or using Visual Studio with the Azure SDK (<b>ASP.NET</b>).
+            </li>
+
+            <li><div class="objective">Add a database to your Survey service</div>
+            <a href="./parts/part2.html">Exercise</a>
+            <br />
+            In this exercise, you will add a new SQL database to your resource group using the Azure management portal and then setup a connection string in your app service.
+            </li>
+
+            <li><div class="objective">Add a new table into the Survey service</div>
+            <a href="./parts/part3a.html">Create a table in a Node.js back end</a> <b>OR</b> <a href="./parts/part3b.html">Create a table in a ASP.NET back end</a>
+            <br />
+            Next, you will need to add a new Table into your service and database. If you used a <b>Node.js</b> back end, then this will definition will be done completely in the Azure management portal. If you used <b>ASP.NET</b>, then you will add some code into your server project and re-publish it.
+            </li>
+
+            <li><div class="objective">Create and populate our survey questions in the Azure portal</div>
+            <a href="./parts/part4a.html">Create a populated table in a Node.js back end</a> <b>OR</b> <a href="./parts/part4b.html">Create a populated table in a ASP.NET back end</a>
+            <br />
+            In this exercise, you will add another table to hold survey questions which is seeded with data. If you are using a <b>Node.js</b> back end, this will be done by importing some <b>.csv</b> files into the Azure portal. If you are using <b>ASP.NET</b>, you will create a new DTO object and <code>TableController</code> and then supply some code to seed the table when it is created.
+            </li>
+
+            <li><div class="objective">Testing your final Survey service</div>
+            <a href="./parts/part5.html">Homework</a>
+            <br />
+            In this final exercise, you will use <a href="https://developer.xamarin.com/guides/cross-platform/workbooks/">Xamarin Workbooks</a> to test our your service. This is intended to be done after class so you have time to explore what you have created from the client-side perspective!
+            </li>
+        </ol>
+
+        <h2>Additional References</h2>
+        <div class="wslist">
+            <a target="_blank" href="https://portal.azure.com/">Azure Management Portal</a>
+            <a target="_blank" href="https://azure.microsoft.com/en-us/downloads/">Azure SDK for Visual Studio</a>
+            <a target="_blank" href="https://blog.greatrexpectations.com/2013/02/02/publish-an-azure-web-site-from-the-command-line/">Publishing to Azure from the Command Line</a>
+            <a target="_blank" href="https://shellmonger.com/2016/04/29/30-days-of-zumo-v2-azure-mobile-apps-day-14-linking-existing-tables/">Exposing an existing SQL table through Azure Easy tables</a>
+        </div>
+
+    </section>
+
+    <script src="./parts/res/js/jquery.min.js"></script>
+    <script src="./parts/res/js/prettify.js"></script>
+    <script src="./parts/res/js/script.js"></script>
+
+    <footer>Copyright (C) 2018 Xamarin Inc., Microsoft.<br><a target="_blank" href="http://university.xamarin.com">Visit Xamarin University for more classes and content</a></footer>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+    <title>Add a new table into the Survey service</title>
+    <link rel="stylesheet" type="text/css" href="./res/styles/normalize.css">
+    <link rel="stylesheet" type="text/css" href="./res/styles/prettify.css" />
+    <link rel="stylesheet" type="text/css" href="./res/styles/styles.css">
+</head>
+
+<body>
+    <!-- Use the same title as the StartHere -->
+    <header>Building an Azure Mobile App</header>
+
+    <section id="main">
+
+        <h1 id="page-title"></h1>
+
+        <h2>Duration</h2>
+        <p>5 minutes</p>
+
+        <h2>Goals</h2>
+        <p>
+            In this lab exercise, you will add a new Easy Table to your mobile application using the Azure portal. This exercise can only be done if you used the portal to create your service (e.g. <b>Node.js</b>). If you are using an <b>ASP.NET</b> back end, then you need to use <a href="./part3b.html">these instructions instead</a>.
+        </p>
+
+        <h2>Challenge</h2>
+        <p>
+        You will need to create a new Easy Table named <b>responses</b> to hold the survey response data. It has the following required shape:
+        <div align="center">
+            <table>
+                <tr>
+                    <th>Columnn Name</th>
+                    <th>Type</th>
+                </tr>
+                <tr>
+                    <td>name</td>
+                    <td>String</td>
+                </tr>
+                <tr>
+                    <td>questionId</td>
+                    <td>String</td>
+                </tr>
+                <tr>
+                    <td>answer</td>
+                    <td>Number</td>
+                </tr>
+            </table>
+        </div>
+        </p>
+
+        <p>
+        If you need some guidance, you can use the step-by-step instructions below.
+        </p>
+
+        <!-- Steps -->
+        <h1>Steps</h1>
+
+        <h2>Add the response Easy Table</h2>
+        <ol>
+            <li>Open a browser window and login to the <a target="_blank" href="https://portal.azure.com/">Azure management portal</a> with your account.</li>
+            <li>Go to your mobile app dashboard.</li>
+            <li>Scroll down through the actions blade and locate the <b>Mobile</b> section. Click on the "Easy tables" item.</li>
+            <img class="indent-none" src="./res/images/ex3-add-easytable.png" />
+            <li>If there is a notice to do so, work through the initial Easy Tables configuration. You will need to initialize the App Service, which will overwrite any existing site contents, so make sure you are working on an App Service created for these labs.
+            </li>
+            <img class="indent-none" style="max-width: 100%" src="./res/images/ex3-configure-easy-tables-alert.png" />
+            <img class="indent-none" style="max-width: 100%" src="./res/images/ex3-configure-easy-tables.png" />
+            <li>Click the <b>+ Add</b> toolbar button to add a new Easy Table definition.</li>
+            <li>Set the name of the new table to be "responses".</li>
+            <img class="indent-none" src="./res/images/ex3-responses-table.png" />
+            <li>Click <b>OK</b> to create the table definition.</li>
+        </ol>
+
+        <h2>Add custom columns to the responses table</h2>
+        <p>
+        Now that we have our table, let's add a few columns to it to store our data.
+        </p>
+        <ol>
+            <li>Click on the "responses" table in the Easy Table blade.</li>
+            <li>Click the <b>Manage Schema</b> toolbar button.</li>
+            <img class="indent-none" style="max-width: 100%" src="./res/images/ex3-manage-schema.png" />
+            <li>Click the <b>+ Add a Column</b> toolbar button to add a new column. We want to add three columns to this table:
+                <ul class="indent-none">
+                    <li><b>questionId</b> (<b>String</b>) to hold the question the person responded to.</li>
+                    <li><b>name</b> (<b>String</b>) to hold the person's name.</li>
+                    <li><b>answer</b> (<b>Number</b>) to hold the answer the person selected.</li>
+                </ul>
+            </li>
+            <img class="indent-none" src="./res/images/ex3-final-schema.png" />
+        </ol>
+
+        <h2>Check your table endpoint (Optional)</h2>
+        <p>
+        Now that we've setup our table, let's make sure the endpoint is working. You can use any generic REST client you prefer, a nice, free one is <a href="https://www.getpostman.com/">Postman</a> which is available as a plug-in for Chrome. You can even hit the endpoint with a regular browser, but since it will be missing the header value, you will get an error back (indicating you are missing the header value).
+        </p>
+        <ol>
+            <li>Open your REST client.</li>
+            <li>The table endpoint will be the URL for your service followed by <b>/tables/responses</b>. So, for example if your site name is <b>castthevote</b>, then the full URL for the table would be: <b>http://castthevote.azurewebsites.net/tables/responses</b>.</li>
+            <li>Add a header value with the name <b>ZUMO-API-VERSION</b> and set it's value to "2.0.0".</li>
+            <div class="hintblock">
+                For simple GET request testing, you can also add the required header value to the querystring instead: <b>http://castthevote.azurewebsites.net/tables/responses?zumo-api-version=2.0.0</b>
+            </div>
+            <li>Issue a <b>GET</b> request.</li>
+            <li>Since the table has no data in it, you should get back an empty JSON array: <code>[]</code>.</li>
+            <li>Alternatively, if you are using a Linux/Mac system, or have access to the command-line Curl, you can use it to hit the service and see the response:
+<pre class="codeblock">
+$ curl -H ZUMO-API-VERSION:2.0.0 -g http://castthevote.azurewebsites.net/tables/responses
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100     2  100     2    0     0     32      0 --:--:-- --:--:-- --:--:--    42[]
+</pre>
+        </ol>
+
+
+        <h1>Summary</h1>
+        <p>
+            In this exercise, you added a new Easy Table to your service using the Azure portal.
+        </p>
+        <div class="align-right">
+            <a href="../Start%20Here.html">Go Back</a>
+        </div>
+    </section>
+
+    <script src="./res/js/jquery.min.js"></script>
+    <script src="./res/js/prettify.js"></script>
+    <script src="./res/js/script.js"></script>
+
+    <footer>Copyright (C) 2018 Xamarin Inc., Microsoft.</footer>
+</body>
+</html>
